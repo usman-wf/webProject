@@ -1,0 +1,163 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+  }
+}
+
+.poppins-extralight {
+  font-family: "Poppins", system-ui;
+  font-weight: 200;
+  font-style: normal;
+}
+
+body {
+  /* color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb)); */
+  overflow-x: hidden;
+  overflow-x: none;
+  box-sizing: border-box;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+li {
+  list-style: none;
+}
+
+@keyframes underline-expand {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.underline-expand {
+  position: relative;
+  display: inline-block;
+}
+
+.underline-expand::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px; /* Adjust thickness of the underline */
+  background-color: #6b7280; /* Matches the color of the text */
+  transition: width 0.3s ease-in-out;
+}
+
+.underline-expand:hover::after {
+  width: 100%;
+  animation: underline-expand 0.3s forwards;
+}
+
+.ripple-button {
+  background-position: center;
+  transition: all ease-in-out 0.3s;
+}
+.ripple-button:hover {
+  background: #000 radial-gradient(circle, transparent 1%, #000 1%)
+    center/15000%;
+}
+.ripple-button:active {
+  outline: none;
+  background-color: #6b7280;
+  background-size: 100%;
+  transition: all ease-in-out 0s;
+}
+
+.custom-scroll-hide::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for Chrome, Safari, and Opera */
+}
+
+.custom-scroll-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.expand {
+  height: 0;
+  animation: expandAnimation 300ms ease-in-out forwards;
+}
+
+@keyframes expandAnimation {
+  from {
+    height: 0;
+  }
+  to {
+    height: 80%;
+  }
+}
+
+.fill-width {
+  width: 0;
+  animation: widthAnimation 5000ms linear forwards;
+}
+
+@keyframes widthAnimation {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes slide-in-top {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in-top {
+  animation: slide-in-top 0.4s ease-out forwards;
+}
+
+.collapse {
+  height: 70%;
+  animation: collapseAnimation 300ms ease-in-out forwards;
+}
+
+@keyframes collapseAnimation {
+  from {
+    height: 70%;
+  }
+  to {
+    height: 0;
+  }
+}
