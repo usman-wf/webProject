@@ -5,7 +5,13 @@ const nextConfig = {
       {
         protocol: 'http',
         hostname: 'localhost',
-        port: '',
+        port: '8000',
+        pathname: '/media/**',
+      },
+      {
+        protocol: 'http',
+        hostname: '127.0.0.1',
+        port: '8000',
         pathname: '/media/**',
       },
       {
@@ -14,8 +20,14 @@ const nextConfig = {
         port: '',
         pathname: '/media/**',
       },
+      {
+        protocol: 'https',
+        hostname: '127.0.0.1',
+        port: '',
+        pathname: '/media/**',
+      },
     ],
-    domains: ["localhost"],
+    domains: ['localhost', '127.0.0.1'],
     unoptimized: false,
   },
 };
