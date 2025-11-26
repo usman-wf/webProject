@@ -1,36 +1,170 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Nexus
 
-## Getting Started
+Nexus is a modern social media platform built with Next.js and Django, featuring real-time messaging, posts, stories, notifications, and user interactions.
 
-First, run the development server:
+## 🌐 Live Deployment
+
+- **Domain**: [https://www.nexuswebsite.me](https://www.nexuswebsite.me)
+- **Frontend**: [https://www.nexuswebsite.me](https://www.nexuswebsite.me)
+- **Backend API**: [https://nexus-ri4c.onrender.com](https://nexus-ri4c.onrender.com)
+
+## 🏗️ Project Structure
+
+This project consists of two main components:
+
+### Frontend (`nexus/`)
+
+A Next.js 14 application that provides the user interface and client-side functionality.
+
+**Tech Stack:**
+
+- **Framework**: Next.js 14.2.7
+- **UI Library**: React 18
+- **Styling**: Tailwind CSS
+- **Real-time Communication**: Socket.IO
+- **HTTP Client**: Axios
+- **State Management**: React Hooks
+- **Authentication**: JWT tokens with cookies
+
+**Key Features:**
+
+- User authentication (login/signup)
+- Dashboard with posts and stories
+- Real-time messaging with Socket.IO
+- User profiles and search
+- Notifications system
+- Post creation and interaction
+- Story creation and viewing
+- Support system
+
+### Backend (`nexus-web/nexus_backend/`)
+
+A Django REST API that handles all server-side logic, database operations, and business logic.
+
+**Tech Stack:**
+
+- **Framework**: Django 5.1.1
+- **API**: Django REST Framework + Django Ninja
+- **Authentication**: JWT (django-ninja-jwt, djangorestframework-simplejwt)
+- **Database**: PostgreSQL (production) / SQLite (development)
+- **Task Queue**: Celery with Redis
+- **CORS**: django-cors-headers
+
+**Key Features:**
+
+- RESTful API endpoints
+- JWT-based authentication
+- User management
+- Post and story management
+- Real-time messaging support
+- Notification system
+- Background task processing with Celery
+- File upload handling (images for posts, stories, profiles)
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- **Node.js** (v18 or higher)
+- **Python** (v3.10 or higher)
+- **PostgreSQL** (for production)
+- **Redis** (for Celery tasks)
+
+### Frontend Setup
+
+1. Navigate to the frontend directory:
+
+```bash
+cd nexus
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The frontend will be available at [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### Backend Setup
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+1. Navigate to the backend directory:
 
-## Learn More
+```bash
+cd nexus-web/nexus_backend
+```
 
-To learn more about Next.js, take a look at the following resources:
+2. Create a virtual environment:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+3. Install dependencies:
 
-## Deploy on Vercel
+```bash
+pip install -r requirements.txt
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+4. Set up environment variables:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+   - Create a `.env` file in `nexus-web/nexus_backend/`
+   - Add required variables (SECRET_KEY, DATABASE_URL, etc.)
+
+5. Run migrations:
+
+```bash
+python manage.py migrate
+```
+
+6. Create a superuser (optional):
+
+```bash
+python manage.py createsuperuser
+```
+
+7. Run the development server:
+
+```bash
+python manage.py runserver
+```
+
+The backend API will be available at [http://localhost:8000](http://localhost:8000)
+
+## 📦 Build for Production
+
+### Frontend
+
+```bash
+cd nexus
+npm run build
+npm start
+```
+
+### Backend
+
+The backend is configured to run with Gunicorn in production. Use your preferred WSGI server configuration.
+
+## 🔧 Development
+
+- Frontend hot-reloads automatically when you edit files in `nexus/src/`
+- Backend uses Django's development server with auto-reload
+- Socket.IO server runs alongside the Next.js server for real-time features
+
+## 📚 Learn More
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Django Documentation](https://docs.djangoproject.com/)
+- [Django REST Framework](https://www.django-rest-framework.org/)
+- [Socket.IO Documentation](https://socket.io/docs/)
+
+## 📝 License
+
+This project is private and proprietary.
