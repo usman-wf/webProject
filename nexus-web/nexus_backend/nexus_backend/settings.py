@@ -68,6 +68,22 @@ MIDDLEWARE = [
 
 CORS_ALLOW_ALL_ORIGINS = True
 
+ALLOWED_HOSTS = [
+    'nexus-ri4c.onrender.com',
+    'localhost',
+    '127.0.0.1',
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://nexus-ri4c.onrender.com',
+    'https://www.nexuswebsite.me',
+    'https://nexuswebsite.me',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    'https://www.nexuswebsite.me',
+    'https://nexuswebsite.me',
+]
 
 ROOT_URLCONF = 'nexus_backend.urls'
 
