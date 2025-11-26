@@ -18,9 +18,15 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Configure decouple to look for .env file in BASE_DIR
+# Configure decouple to look for .env file in BASE_DIR if it exists,
+# otherwise use environment variables (for production)
+# This allows the app to work both in development (with .env) and production (with env vars)
 env_path = BASE_DIR / '.env'
-config = Config(RepositoryEnv(str(env_path)))
+if env_path.exists():
+    config = Config(RepositoryEnv(str(env_path)))
+else:
+    # In production, use default Config which reads from environment variables
+    config = Config()
 
 
 # Quick-start development settings - unsuitable for production
@@ -32,8 +38,6 @@ SECRET_KEY = config('secretkey')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DJANGO_DEBUG', default=True, cast=bool)
-
-ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -58,8 +62,6 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -194,10 +196,8 @@ SIMPLE_JWT = {
     'TOKEN_BLACKLIST': 'rest_framework_simplejwt.token_blacklist',
 }
 
-ALLOWED_HOSTS = [
-    "localhost", "*"
-]
-import os
+# Allow hosts from environment variable, or default to localhost
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost').split(',')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = str(BASE_DIR / 'media')
