@@ -207,8 +207,6 @@ SIMPLE_JWT = {
     'TOKEN_BLACKLIST': 'rest_framework_simplejwt.token_blacklist',
 }
 
-# Allow hosts from environment variable, or default to localhost
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost').split(',')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = str(BASE_DIR / 'media')
