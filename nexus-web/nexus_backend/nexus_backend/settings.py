@@ -11,22 +11,17 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-from decouple import Config, RepositoryEnv
+from decouple import AutoConfig
 from datetime import timedelta
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Configure decouple to look for .env file in BASE_DIR if it exists,
-# otherwise use environment variables (for production)
+# Configure decouple to automatically use environment variables first,
+# then fall back to .env file if it exists
 # This allows the app to work both in development (with .env) and production (with env vars)
-env_path = BASE_DIR / '.env'
-if env_path.exists():
-    config = Config(RepositoryEnv(str(env_path)))
-else:
-    # In production, use default Config which reads from environment variables
-    config = Config()
+config = AutoConfig(search_path=BASE_DIR)
 
 
 # Quick-start development settings - unsuitable for production
