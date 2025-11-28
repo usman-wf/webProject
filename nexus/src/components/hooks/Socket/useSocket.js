@@ -19,8 +19,20 @@ const useSocket = () => {
   } = useMessage();
 
   const createSocketConnection = () => {
-    let newSocket = io();
-    console.log("NEW SOCK", newSocket);
+    // Determine the Socket.IO server URL based on environment
+    const isDev = process.env.NODE_ENV === "development";
+    const socketUrl = isDev
+      ? "http://localhost:3001" // Local socket server in development
+      : process.env.NEXT_PUBLIC_SOCKET_URL ||
+        "https://webproject-production-a226.up.railway.app"; // Railway URL in production
+
+    let newSocket = io(socketUrl, {
+      transports: ["websocket", "polling"],
+      reconnection: true,
+      reconnectionDelay: 1000,
+      reconnectionAttempts: 5,
+    });
+    console.log("NEW SOCK", newSocket, "Connecting to:", socketUrl);
     setSocket(newSocket);
 
     newSocket.on("connect_error", (err) => {
@@ -67,13 +79,18 @@ const useSocket = () => {
         behavior: "smooth",
       });
 
-      console.log("J#NDHUO");
-      socket.emit("sendMessage", {
-        chatId,
-        message,
-        username,
-        sender: cookie.get("username"),
-      });
+      if (socket && socket.connected) {
+        socket.emit("sendMessage", {
+          chatId,
+          message,
+          username,
+          sender: cookie.get("username"),
+        });
+      } else {
+        console.warn(
+          "Socket not connected, message sent to DB but not broadcasted"
+        );
+      }
     }
   };
 
