@@ -12,6 +12,11 @@ story_router = NinjaAPI(urls_namespace='storyAPI')
 
 story_message = "Story Not Found"
 
+def build_absolute(request, url_path: str | None) -> str | None:
+    if not url_path:
+        return None
+    return request.build_absolute_uri(url_path)
+
 @story_router.post("/hide-user-from-story", auth=JWTAuth())
 def hide_user_from_story(request, payload: HideUserFromStorySchema) -> Response:
     
@@ -63,7 +68,7 @@ def create_story(request, caption: str = Form(None), post_image: UploadedFile = 
         "success": True,
         "message": "Story created successfully",
         "story_id": story.story_id,
-        "story_image": story.story_image.url if story.story_image else None,
+        "story_image": build_absolute(request, story.story_image.url if story.story_image else None),
         "expiry_time": story.story_time.isoformat(),
     }, status=201)
 
@@ -96,10 +101,10 @@ def get_user_stories(request, payload: ViewUserStorySchema) -> Response:
 
     if stories.exists():
         story = stories[payload.index]
-        user_profile_image_url = (
-            user_profile.profile_image.url if user_profile.profile_image else f"{
-                settings.MEDIA_URL}profile_images/default.png"
-            )
+        user_profile_image_url = build_absolute(
+            request,
+            user_profile.profile_image.url if user_profile.profile_image else f"{settings.MEDIA_URL}profile_images/default.png"
+        )
 
         # Prepare response data
         return Response({
@@ -109,7 +114,7 @@ def get_user_stories(request, payload: ViewUserStorySchema) -> Response:
             "viewed_by_user_count": viewed_by_user_count,
             "id": story.story_id,
             "caption": story.story_text,
-            "image": story.story_image.url if story.story_image else None,
+            "image": build_absolute(request, story.story_image.url if story.story_image else None),
             "time": story.story_time.isoformat(),
             "viewed_by_count": story.viewed_by.count() if is_owner else None,
             "profile_image": user_profile_image_url,
@@ -164,7 +169,7 @@ def get_friends_with_stories(request) -> Response:
         friends_with_stories.append({
             "username": request.user.username,
             "user_id": request.user.id,
-            "profile_image": get_profile_image_url(user_profile),
+            "profile_image": get_profile_image_url(request, user_profile),
             "story_index_to_view": get_story_index_to_view(user_stories, request.user),
             "yet_to_view": has_unviewed_stories(user_stories, request.user)
         })
@@ -177,7 +182,7 @@ def get_friends_with_stories(request) -> Response:
             friends_with_stories.append({
                 "username": friend.username,
                 "user_id": friend.id,
-                "profile_image": get_profile_image_url(friend_profile),
+                "profile_image": get_profile_image_url(request, friend_profile),
                 "story_index_to_view": get_story_index_to_view(stories, request.user),
                 "yet_to_view": has_unviewed_stories(stories, request.user)
             })
@@ -189,8 +194,11 @@ def get_user_stories(user):
     return Story.objects.filter(story_user=user).exclude(hidden_from=user)
 
 
-def get_profile_image_url(user_profile):
-    return user_profile.profile_image.url if user_profile.profile_image else f"{settings.MEDIA_URL}profile_images/default.png"
+def get_profile_image_url(request, user_profile):
+    return build_absolute(
+        request,
+        user_profile.profile_image.url if user_profile.profile_image else f"{settings.MEDIA_URL}profile_images/default.png"
+    )
 
 
 def get_story_index_to_view(stories, user):
@@ -223,7 +231,10 @@ def get_story_visibility(request, payload: ViewStorySchema) -> Response:
     for follower in followers:
         visibility_data.append({
             "username": follower.username,
-            "profile_picture": follower.userprofile.profile_image.url if follower.userprofile.profile_image else f"{settings.MEDIA_URL}profile_images/default.png",
+            "profile_picture": build_absolute(
+                request,
+                follower.userprofile.profile_image.url if follower.userprofile.profile_image else f"{settings.MEDIA_URL}profile_images/default.png"
+            ),
             "is_hidden": follower in hidden_users
         })
 
@@ -313,13 +324,12 @@ def search_story_viewer(request, payload: SearchViewerSchema) -> Response:
     for viewer in viewers:
         try:
             viewer_profile = UserProfile.objects.get(user=viewer)
-            profile_image_url = (
-                viewer_profile.profile_image.url if viewer_profile.profile_image else f"{
-                    settings.MEDIA_URL}profile_images/default.png"
+            profile_image_url = build_absolute(
+                request,
+                viewer_profile.profile_image.url if viewer_profile.profile_image else f"{settings.MEDIA_URL}profile_images/default.png"
             )
         except UserProfile.DoesNotExist:
-            profile_image_url = f"{
-                settings.MEDIA_URL}profile_images/default.png"
+            profile_image_url = build_absolute(request, f"{settings.MEDIA_URL}profile_images/default.png")
 
         viewers_data.append({
             "id": viewer.id,

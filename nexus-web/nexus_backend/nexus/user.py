@@ -22,6 +22,11 @@ user_not_found_message = "User not found"
 
 user_router = NinjaAPI(urls_namespace='userAPI')
 
+def build_absolute(request, url_path: str | None) -> str | None:
+    if not url_path:
+        return None
+    return request.build_absolute_uri(url_path)
+
 
 @user_router.post("/edit-profile", auth=JWTAuth())
 def edit_profile(request, 
@@ -53,7 +58,7 @@ def edit_profile(request,
         request.user.save()
         user_profile.save()
 
-        profile_picture_url = get_profile_picture_url(user_profile)
+        profile_picture_url = get_profile_picture_url(request, user_profile)
         
         return Response({
             "success": True,
@@ -101,8 +106,11 @@ def handle_password_change(user, previous_password, new_password):
         raise ValueError("Previous password is incorrect")
     user.set_password(new_password)
 
-def get_profile_picture_url(user_profile):
-    return user_profile.profile_image.url if user_profile.profile_image else f"{settings.MEDIA_URL}profile_images/default.png"
+def get_profile_picture_url(request, user_profile):
+    return build_absolute(
+        request,
+        user_profile.profile_image.url if user_profile.profile_image else f"{settings.MEDIA_URL}profile_images/default.png"
+    )
 
 
 
@@ -121,9 +129,9 @@ def search_user(request, payload: UserSchema) -> Response:
     for user in users:
         user_profile = UserProfile.objects.get(
             user=user) if hasattr(user, 'userprofile') else None
-        profile_picture_url = (
-            user_profile.profile_image.url if user_profile and user_profile.profile_image else f"{
-                settings.MEDIA_URL}profile_images/default.png"
+        profile_picture_url = build_absolute(
+            request,
+            user_profile.profile_image.url if user_profile and user_profile.profile_image else f"{settings.MEDIA_URL}profile_images/default.png"
         )
         is_following = request.user.following.filter(id=user.id).exists()
 
@@ -171,7 +179,7 @@ def user_profile(request, payload: UserSchema) -> Response:
         posts_data = [
             {
                 "post_id": post.post_id,
-                "post_image": post.post_image.url if post.post_image else f"{settings.MEDIA_URL}posts/default.png"
+                "post_image": build_absolute(request, post.post_image.url if post.post_image else f"{settings.MEDIA_URL}posts/default.png")
             }
             for post in posts
         ]
@@ -188,7 +196,7 @@ def user_profile(request, payload: UserSchema) -> Response:
         "first_name": searched_user.first_name,
         "last_name": searched_user.last_name,
         "bio": user_profile.bio,
-        "profile_picture": user_profile.profile_image.url if user_profile.profile_image else f"{settings.MEDIA_URL}profile_images/default.png",
+        "profile_picture": build_absolute(request, user_profile.profile_image.url if user_profile.profile_image else f"{settings.MEDIA_URL}profile_images/default.png"),
         "posts": posts_data,
         "follows_searched_user": follows_searched_user,
         "searched_user_follows": searched_user_follows,
@@ -396,14 +404,14 @@ def view_notifications(request) -> Response:
         if (notification.notify_type == "like" or notification.notify_type == "comment"):
             notified_post = Post.objects.get(
                 post_id=notification.notify_post.post_id)
-            post_url = notified_post.post_image.url
+            post_url = build_absolute(request, notified_post.post_image.url)
         response_data.append({
             "notify_from": notification.notify_from.username,
             "notify_text": notification.notify_text,
             "notify_date": timesince(notification.notify_time) + " ago",
             "notify_type": notification.notify_type,
             "post_id": notification.notify_post.post_id if notification.notify_post else None,
-            "profile_picture": profile.profile_image.url if profile.profile_image else f"{settings.MEDIA_URL}profile_images/default.png",
+            "profile_picture": build_absolute(request, profile.profile_image.url if profile.profile_image else f"{settings.MEDIA_URL}profile_images/default.png"),
             "post_image": post_url
 
         })
@@ -432,7 +440,8 @@ def search_followers_of_user(request, payload: SearchFollowSchema) -> Response:
     for user in filtered_followers:
         user_profile = UserProfile.objects.get(
             user=user) if hasattr(user, 'userprofile') else None
-        profile_picture_url = (
+        profile_picture_url = build_absolute(
+            request,
             user_profile.profile_image.url
             if user_profile and user_profile.profile_image
             else f"{settings.MEDIA_URL}profile_images/default.png"
@@ -468,7 +477,8 @@ def search_following_of_user(request, payload: SearchFollowSchema) -> Response:
     for user in filtered_following:
         user_profile = UserProfile.objects.get(
             user=user) if hasattr(user, 'userprofile') else None
-        profile_picture_url = (
+        profile_picture_url = build_absolute(
+            request,
             user_profile.profile_image.url
             if user_profile and user_profile.profile_image
             else f"{settings.MEDIA_URL}profile_images/default.png"

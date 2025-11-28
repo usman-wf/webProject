@@ -3,6 +3,7 @@
 import { useParams } from "next/navigation";
 import { useEffect, useRef } from "react";
 import Image from "next/image";
+import { toImageSrc } from "../../../../utils/image";
 import { useRouter } from "next/navigation";
 import Cookies from "universal-cookie";
 
@@ -50,7 +51,7 @@ export default function Page() {
             }}
           >
             <Image
-              src={`${process.env.NEXT_PUBLIC_URL}${chatDetail.receiver_profile_picture}`}
+              src={toImageSrc(chatDetail.receiver_profile_picture)}
               alt="profile picture"
               width={40}
               height={40}
@@ -69,7 +70,7 @@ export default function Page() {
               >
                 {!message.is_owner && (
                   <Image
-                    src={`${process.env.NEXT_PUBLIC_URL}${chatDetail.receiver_profile_picture}`}
+                    src={toImageSrc(chatDetail.receiver_profile_picture)}
                     alt="Sender profile"
                     width={20}
                     height={20}
@@ -90,7 +91,7 @@ export default function Page() {
                 </div>
                 {message.is_owner && (
                   <Image
-                    src={`${process.env.NEXT_PUBLIC_URL}${chatDetail.sender_profile_picture}`}
+                    src={toImageSrc(chatDetail.sender_profile_picture)}
                     alt="Receiver profile"
                     width={20}
                     height={20}

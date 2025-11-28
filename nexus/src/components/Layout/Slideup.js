@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { toImageSrc } from "../../utils/image";
 import { Fragment } from "react";
 
 import TextInput from "../Input/TextInput";
@@ -37,7 +38,7 @@ const Slideup = (props) => {
         <div className="flex items-center">
           <div className="flex items-center">
             <Image
-              src={`${process.env.NEXT_PUBLIC_URL}${props.userInfo.profile_picture}`}
+              src={toImageSrc(props.userInfo.profile_picture)}
               width={10}
               height={10}
               className="w-20 h-20 rounded-full"

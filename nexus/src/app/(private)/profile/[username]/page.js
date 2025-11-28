@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
+import { toImageSrc } from "../../../../utils/image";
 import { useRouter } from "next/navigation";
 import Cookies from "universal-cookie";
 
@@ -67,9 +68,7 @@ const Page = () => {
   console.log("PARAMS", username, currentUser);
 
   const cacheBustedPath = currentUser
-    ? `${process.env.NEXT_PUBLIC_URL}${
-        currentUser.profile_picture
-      }?t=${new Date().getTime()}`
+    ? `${toImageSrc(currentUser.profile_picture)}?t=${new Date().getTime()}`
     : null;
 
   console.log("NOW", cacheBustedPath);
@@ -81,7 +80,7 @@ const Page = () => {
           <div className="flex gap-x-5 md:gap-x-10 lg:gap-x-20 items-center">
             <div className="flex flex-col">
               <Image
-                src={`${process.env.NEXT_PUBLIC_URL}${currentUser.profile_picture}`}
+                src={toImageSrc(currentUser.profile_picture)}
                 alt="profile"
                 width={10}
                 height={10}
@@ -192,7 +191,7 @@ const Page = () => {
                   onClick={() => {
                     router.push(`/post/${item.post_id}`);
                   }}
-                  src={`${process.env.NEXT_PUBLIC_URL}${item.post_image}`}
+                  src={toImageSrc(item.post_image)}
                   alt="post"
                   width={500}
                   height={500}

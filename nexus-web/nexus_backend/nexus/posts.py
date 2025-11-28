@@ -16,6 +16,13 @@ post_router = NinjaAPI(urls_namespace='postAPI')
 
 post_message = "Post Not Found"
 
+
+def build_absolute(request, url_path: str | None) -> str | None:
+    if not url_path:
+        return None
+    return request.build_absolute_uri(url_path)
+
+
 @post_router.post("/view-comments", auth=JWTAuth())
 def get_comments(request, payload: PostSchema) -> Response:
     try:
@@ -32,10 +39,11 @@ def get_comments(request, payload: PostSchema) -> Response:
     for comment in comments:
         commented_by = UserProfile.objects.get(user=comment.comment_user)
 
-        profile_picture_url = (
-            commented_by.profile_image.url if commented_by.profile_image else f"{
-                settings.MEDIA_URL}profile_images/default.png"
-
+        profile_picture_url = build_absolute(
+            request,
+            commented_by.profile_image.url
+            if commented_by.profile_image
+            else f"{settings.MEDIA_URL}profile_images/default.png",
         )
         time_ago = timesince(comment.comment_date)
         response_data.append({
@@ -60,8 +68,10 @@ def like_post(request, payload: PostSchema) -> Response:
         post = Post.objects.get(post_id=payload.post_id)
     except Post.DoesNotExist:
         return Response({"error": post_message}, status=404)
-    post_image_url = os.path.join(
-        settings.MEDIA_URL, f'posts/{post.post_id}.{post.post_image.name.split(".")[-1]}')
+    post_image_url = build_absolute(
+        request,
+        post.post_image.url if post.post_image else None,
+    )
 
     likes_count = post.likes_list.count()
     current_user_has_liked = False
@@ -69,9 +79,11 @@ def like_post(request, payload: PostSchema) -> Response:
         current_user_has_liked = True
 
     user_profile = UserProfile.objects.get(user=post.user_id)
-    profile_picture_url = (
-        user_profile.profile_image.url if user_profile.profile_image else f"{
-            settings.MEDIA_URL}profile_images/default.png"
+    profile_picture_url = build_absolute(
+        request,
+        user_profile.profile_image.url
+        if user_profile.profile_image
+        else f"{settings.MEDIA_URL}profile_images/default.png",
     )
 
     object_to_return = {
@@ -140,8 +152,7 @@ def create_comment(request, payload: CommentSchema) -> Response:
         notify_from=request.user,
         notify_to=post.user_id,  
         notify_type="comment",
-        notify_text=f"{request.user.username} commented on your post: {
-            payload.comment_message}",
+        notify_text=f"{request.user.username} commented on your post: {payload.comment_message}",
         notify_post=post
     )
 
@@ -195,7 +206,7 @@ def create_post(request, caption: str = Form(None), post_image: UploadedFile = F
         "success": True,
         "message": "Post created successfully",
         "post_id": post.post_id,
-        "post_image": post.post_image.url if post.post_image else None
+        "post_image": build_absolute(request, post.post_image.url if post.post_image else None)
     }, status=201)
 
 
@@ -266,13 +277,14 @@ def search_user_in_post_likes(request, payload: SearchLikeSchema) -> Response:
     for user in liked_users:
         try:
             user_profile = UserProfile.objects.get(user=user)
-            profile_image_url = (
-                user_profile.profile_image.url if user_profile.profile_image else f"{
-                    settings.MEDIA_URL}profile_images/default.png"
+            profile_image_url = build_absolute(
+                request,
+                user_profile.profile_image.url
+                if user_profile.profile_image
+                else f"{settings.MEDIA_URL}profile_images/default.png",
             )
         except UserProfile.DoesNotExist:
-            profile_image_url = f"{
-                settings.MEDIA_URL}profile_images/default.png"
+            profile_image_url = build_absolute(request, f"{settings.MEDIA_URL}profile_images/default.png")
 
         liked_users_data.append({
             "username": user.username,

@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { toImageSrc } from "../../utils/image";
 import { useSearchParams } from "next/navigation";
 
 import StoryDetail from "../Detail/StoryDetail";
@@ -148,7 +149,7 @@ const StoryWrapper = (props) => {
             </div>
             <div className="flex w-fit h-fit items-center">
               <Image
-                src={`${process.env.NEXT_PUBLIC_URL}${currentStory.profile_image}`}
+                src={toImageSrc(currentStory.profile_image)}
                 alt="profile"
                 width={10}
                 height={10}

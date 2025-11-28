@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { toImageSrc } from "../../utils/image";
 import { useRouter } from "next/navigation";
 
 import ConfirmationModal from "../Layout/ConfirmationModal";
@@ -15,7 +16,7 @@ const CommentItem = (props) => {
     <div className="flex items-center justify-between w-full text-sm">
       <div className="flex items-center">
         <Image
-          src={`${process.env.NEXT_PUBLIC_URL}${props.profilePicture}`}
+          src={toImageSrc(props.profilePicture)}
           width={10}
           height={10}
           className="w-10 h-10 rounded-full hover:cursor-pointer"

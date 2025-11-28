@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { toImageSrc } from "../../utils/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -24,7 +25,7 @@ const UserItem = (props) => {
     >
       <div className="flex items-center">
         <Image
-          src={`${process.env.NEXT_PUBLIC_URL}${props.profilePicture}`}
+          src={toImageSrc(props.profilePicture)}
           width={20}
           height={20}
           alt="profile"

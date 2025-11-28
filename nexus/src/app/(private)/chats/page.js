@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import Image from "next/image";
+import { toImageSrc } from "../../../utils/image";
 import { useRouter } from "next/navigation";
 
 import useMessage from "../../../components/hooks/Message/useMessage";
@@ -41,7 +42,7 @@ export default function Page() {
                     width={10}
                     className="w-10 h-10 rounded-full object-cover"
                     alt="profile"
-                    src={`${process.env.NEXT_PUBLIC_URL}${chat.profile_picture}`}
+                    src={toImageSrc(chat.profile_picture)}
                   />
                   <span className="font-bold">{chat.username}</span>
                 </div>

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { toImageSrc } from "../../utils/image";
 import Link from "next/link";
 
 const StoryItem = (props) => {
@@ -20,7 +21,7 @@ const StoryItem = (props) => {
           }`}
           width={10}
           height={10}
-          src={`${process.env.NEXT_PUBLIC_URL}${props.profilePicture}`}
+          src={toImageSrc(props.profilePicture)}
           alt="profile"
         />
         <span className="max-w-full text-center text-sm break-words line-clamp-1 mt-1">

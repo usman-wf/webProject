@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { toImageSrc } from "../../utils/image";
 import { useRouter } from "next/navigation";
 
 import PrimaryButton from "../Button/PrimaryButton";
@@ -14,7 +15,7 @@ const OtherNotification = (props) => {
     <div className="w-full transition-all duration-300 rounded-lg p-3 flex items-center hover:cursor-pointer justify-between gap-x-3">
       <div className="flex items-center" onClick={clickNotificationHandler}>
         <Image
-          src={`${process.env.NEXT_PUBLIC_URL}${props.profilePicture}`}
+          src={toImageSrc(props.profilePicture)}
           alt="profile"
           width={50}
           height={50}
@@ -38,7 +39,7 @@ const OtherNotification = (props) => {
             width={40}
             height={40}
             className="rounded-md"
-            src={`${process.env.NEXT_PUBLIC_URL}${props.post}`}
+            src={toImageSrc(props.post)}
           />
         )}
       </div>

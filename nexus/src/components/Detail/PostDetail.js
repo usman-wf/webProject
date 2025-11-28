@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import Image from "next/image";
+import { toImageSrc } from "../../utils/image";
 import { useRouter } from "next/navigation";
 
 import LikeLogo from "../../assets/notification.png";
@@ -86,10 +87,7 @@ const PostDetail = (props) => {
       <div className="flex justify-between items-center">
         <Link href={`/profile/${props.username}`} className="flex items-center">
           <Image
-            src={
-              props.profilePicture &&
-              `${process.env.NEXT_PUBLIC_URL}${props.profilePicture}`
-            }
+            src={props.profilePicture && toImageSrc(props.profilePicture)}
             className="w-10 h-10 rounded-full"
             alt="profile"
             width={10}
@@ -127,7 +125,7 @@ const PostDetail = (props) => {
         )}
       </div>
       <Image
-        src={`${process.env.NEXT_PUBLIC_URL}${props.post}`}
+        src={toImageSrc(props.post)}
         className="rounded-md mb-3"
         width={500} // Set your desired width
         height={300} // Set your desired height

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { toImageSrc } from "../../utils/image";
 import { Fragment, useEffect, useState } from "react";
 
 import ChevronRight from "../../assets/chevronRight.png";
@@ -99,7 +100,7 @@ const StoryDetail = (props) => {
           <Loader />
         ) : (
           <Image
-            src={`${process.env.NEXT_PUBLIC_URL}/${props.image}`}
+            src={toImageSrc(props.image)}
             alt="mountain"
             width={500}
             height={500}

@@ -1,4 +1,3 @@
-import os
 from django.conf import settings
 from ninja import NinjaAPI, Schema
 from ninja.responses import Response
@@ -10,6 +9,11 @@ from django.utils.timesince import timesince
 from .posts import post_router
 
 hp_router = NinjaAPI(urls_namespace='HPapi')
+
+def build_absolute(request, url_path: str | None) -> str | None:
+    if not url_path:
+        return None
+    return request.build_absolute_uri(url_path)
 
 
 @hp_router.get("/posts", auth=JWTAuth())
@@ -32,10 +36,7 @@ def get_homepage_posts(request) -> Response:
 
     response_data = []
     for post in posts:
-        post_image_url = None
-        if post.post_image:
-            post_image_url = os.path.join(
-                settings.MEDIA_URL, f'posts/{post.post_id}.{post.post_image.name.split(".")[-1]}')
+        post_image_url = build_absolute(request, post.post_image.url) if post.post_image else None
 
         likes_count = post.likes_list.count()
         current_user_has_liked = False
@@ -44,9 +45,9 @@ def get_homepage_posts(request) -> Response:
 
         friend_profile = UserProfile.objects.get(user=post.user_id)
 
-        profile_picture_url = (
-            friend_profile.profile_image.url if friend_profile.profile_image else f"{
-                settings.MEDIA_URL}profile_images/default.png"
+        profile_picture_url = build_absolute(
+            request,
+            friend_profile.profile_image.url if friend_profile.profile_image else f"{settings.MEDIA_URL}profile_images/default.png",
         )
 
         time_ago = timesince(post.post_date)
