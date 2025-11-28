@@ -4,7 +4,18 @@ import { Server } from "socket.io";
 const hostname = process.env.HOSTNAME || process.env.HOST || "0.0.0.0";
 const port = parseInt(process.env.PORT || "3001", 10);
 
-const httpServer = createServer();
+// Create HTTP server with a basic health check endpoint for Railway
+const httpServer = createServer((req, res) => {
+  // Health check endpoint for Railway
+  if (req.url === "/" || req.url === "/health") {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ status: "ok", service: "socket-server" }));
+    return;
+  }
+  // For all other routes, return 404
+  res.writeHead(404, { "Content-Type": "application/json" });
+  res.end(JSON.stringify({ error: "Not Found" }));
+});
 
 // Initialize Socket.IO with CORS configuration
 const io = new Server(httpServer, {

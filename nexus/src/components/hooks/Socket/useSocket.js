@@ -24,7 +24,7 @@ const useSocket = () => {
     const socketUrl = isDev
       ? "http://localhost:3001" // Local socket server in development
       : process.env.NEXT_PUBLIC_SOCKET_URL ||
-        "https://webproject-production-a226.up.railway.app"; // Railway URL in production
+        "https://webproject-production-01a0.up.railway.app"; // Railway URL in production
 
     let newSocket = io(socketUrl, {
       transports: ["websocket", "polling"],
