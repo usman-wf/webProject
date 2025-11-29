@@ -1,0 +1,10 @@
+# Ignore Next.js files for socket server deployment
+.next/
+pages/
+app/
+public/
+styles/
+components/
+next.config.js
+server.js
+src/
