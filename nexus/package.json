@@ -7,6 +7,7 @@
     "dev": "node server.js",
     "build": "next build",
     "start": "node server.js",
+    "socket": "node socket-server.js",
     "lint": "next lint"
   },
   "dependencies": {

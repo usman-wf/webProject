@@ -35,18 +35,34 @@ const useSocket = () => {
     console.log("NEW SOCK", newSocket, "Connecting to:", socketUrl);
     setSocket(newSocket);
 
+    newSocket.on("connect", () => {
+      console.log("✅ Socket connected successfully!", newSocket.id);
+    });
+
     newSocket.on("connect_error", (err) => {
-      console.log(`connect_error due to ${err.message}`);
+      console.error("❌ Socket connection error:", err.message);
+      console.error("Error details:", err);
       newSocket.disconnect();
       newSocket = null;
       setSocket(null);
       toast.error(
-        "Error connecting to server. Real time chat is disabled. Please refresh the page."
+        `Error connecting to server: ${err.message}. Real time chat is disabled. Please refresh the page.`
       );
       return;
     });
 
-    newSocket.emit("join", { chatId, username: cookie.get("username") });
+    newSocket.on("disconnect", (reason) => {
+      console.log("Socket disconnected:", reason);
+    });
+
+    // Wait for connection before joining
+    if (newSocket.connected) {
+      newSocket.emit("join", { chatId, username: cookie.get("username") });
+    } else {
+      newSocket.once("connect", () => {
+        newSocket.emit("join", { chatId, username: cookie.get("username") });
+      });
+    }
 
     newSocket.on("receiveMessage", async (data) => {
       console.log("MESSAGE RECEIVED", data);
